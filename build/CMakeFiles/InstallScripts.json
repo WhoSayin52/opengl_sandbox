@@ -1,0 +1,18 @@
+{
+	"Configs" : 
+	[
+		"Debug"
+	],
+	"InstallScripts" : 
+	[
+		"/home/entity/workspace/personal/opengl_sandbox/build/cmake_install.cmake",
+		"/home/entity/workspace/personal/opengl_sandbox/build/assets/cmake_install.cmake",
+		"/home/entity/workspace/personal/opengl_sandbox/build/lib/cmake_install.cmake",
+		"/home/entity/workspace/personal/opengl_sandbox/build/lib/glad/cmake_install.cmake",
+		"/home/entity/workspace/personal/opengl_sandbox/build/lib/glm-1.0.1-light/glm/cmake_install.cmake",
+		"/home/entity/workspace/personal/opengl_sandbox/build/lib/stb_image/cmake_install.cmake",
+		"/home/entity/workspace/personal/opengl_sandbox/build/shaders/cmake_install.cmake",
+		"/home/entity/workspace/personal/opengl_sandbox/build/src/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

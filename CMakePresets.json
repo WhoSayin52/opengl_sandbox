@@ -1,0 +1,12 @@
+{
+	"version": 10,
+	"configurePresets": [
+		{
+			"name": "gcc-default",
+			"displayName": "g++ | Ninja Multi-Config",
+			"description": "g++ | Ninja Multi-Config",
+			"generator": "Ninja Multi-Config",
+			"binaryDir": "${sourceDir}/build"
+		}
+	]
+}
