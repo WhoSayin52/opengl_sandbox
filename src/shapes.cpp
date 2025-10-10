@@ -90,3 +90,74 @@ uint init_rectangle() {
 
 	return  vao;
 }
+
+float cube_vertices[] = {
+	// positions           // texture coords
+	 -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	  0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	  0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	  0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+	 -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	  0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	  0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	  0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	 -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+	 -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	  0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	  0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	  0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	  0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	  0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	  0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	 -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	  0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	  0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	  0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	 -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	  0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	  0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	  0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	 -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
+
+uint cube_vbo;
+//uint cube_ebo;
+
+uint init_cube() {
+	uint vao;
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glGenBuffers(1, &cube_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, cube_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// skipping 1 since we dont need color shader var like above shapes
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
+
+	return vao;
+}

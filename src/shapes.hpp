@@ -7,4 +7,6 @@ uint init_triangle();
 
 uint init_rectangle();
 
+uint init_cube();
+
 #endif // SHAPES_HPP
