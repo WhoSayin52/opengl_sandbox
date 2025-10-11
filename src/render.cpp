@@ -1,5 +1,6 @@
 #include "render.hpp"
 
+#include "camera.hpp"
 #include "core.hpp"
 #include "shapes.hpp"
 #include "shader.hpp"
@@ -25,6 +26,7 @@ float vertices[] = {
 static uint vbo;
 static uint vao;
 */
+
 
 static uint texture1;
 static uint texture2;
@@ -105,8 +107,8 @@ void render(GLFWwindow* window, Shader* shader) {
 	//glBindVertexArray(rectangle_vao);
 	glBindVertexArray(cube_vao);
 
-	glm::mat4 view{ 1.0f };
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	glm::mat4 view;
+	view = glm::lookAt(glm::vec3(cam.pos), cam.pos - cam.z_axis, cam.y_axis);
 
 	int view_location{ glGetUniformLocation(shader->id, "view") };
 	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
