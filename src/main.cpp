@@ -1,6 +1,7 @@
 #include "input.hpp"
 #include "render.hpp"
 #include "shader.hpp"
+#include "time.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -16,9 +17,15 @@ int main() {
 
 	Shader shader{ "../shaders/shader.vs", "../shaders/shader.fs" };
 
+	init_input(window);
 	init_renderer(&shader);
 
 	while (glfwWindowShouldClose(window) == 0) {
+
+		float current_frame = (float)glfwGetTime();
+		delta = current_frame - last_frame;
+		last_frame = current_frame;
+
 		// input handler
 		input(window);
 

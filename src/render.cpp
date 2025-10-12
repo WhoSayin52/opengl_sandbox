@@ -108,13 +108,13 @@ void render(GLFWwindow* window, Shader* shader) {
 	glBindVertexArray(cube_vao);
 
 	glm::mat4 view;
-	view = glm::lookAt(glm::vec3(cam.pos), cam.pos - cam.z_axis, cam.y_axis);
+	view = glm::lookAt(cam.pos, cam.pos - cam.direction, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 	int view_location{ glGetUniformLocation(shader->id, "view") };
 	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
 
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(cam.fov), 800.0f / 600.0f, 0.1f, 100.0f);
 
 	int projection_location{ glGetUniformLocation(shader->id, "projection") };
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
