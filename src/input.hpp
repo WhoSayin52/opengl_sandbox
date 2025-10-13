@@ -3,8 +3,8 @@
 
 struct GLFWwindow;
 
-void init_input(GLFWwindow* window);
+void init_input();
 
-void input(GLFWwindow* window);
+void input();
 
 #endif // INPUT_HPP

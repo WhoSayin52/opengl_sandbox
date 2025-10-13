@@ -1,20 +1,10 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
-#include <glm/glm.hpp>
+#include "core.hpp"
 
-struct Camera {
-	glm::vec3 pos;
-	glm::vec3 direction;
-	float fov;
-	const float speed;
-};
+void init_camera();
 
-inline Camera cam{
-	glm::vec3{0.0f, 0.0f, 3.0f},
-	glm::vec3{0.0f, 0.0f, 1.0f},
-	45.0f,
-	2.5f
-};
+void camera_process_movement(GLFWwindow* window);
 
 #endif // CAMERA_HPP

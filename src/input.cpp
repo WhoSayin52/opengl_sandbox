@@ -1,47 +1,34 @@
 #include "input.hpp"
 
 #include "camera.hpp"
-#include "time.hpp"
+#include "core.hpp"
 
 #include <GLFW/glfw3.h>
 
-static glm::vec2 mouse_center_pos{ 400.0f, 300.0f };
-static float pitch{};
-static float yaw{ 90.0f };
+void init_input() {
 
-void mouse_callback(GLFWwindow* window, double x, double y);
-void scroll_callback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] double x_offset, double y_offset);
+	int mouse_x{ game_state.window_width / 2 };
+	int mouse_y{ game_state.window_height / 2 };
 
-void init_input(GLFWwindow* window) {
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	glfwSetCursorPos(window, mouse_center_pos.x, mouse_center_pos.y);
-
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	input_state = InputState{
+		.mouse_position = Vector2{mouse_x, mouse_y}
+	};
 }
 
-void input(GLFWwindow* window) {
-	// check and call events
+void input() {
+	// checks and calls events
 	glfwPollEvents();
+
+	GLFWwindow* window = game_state.window;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		cam.pos -= cam.direction * cam.speed * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		cam.pos += cam.direction * cam.speed * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		cam.pos += glm::normalize(glm::cross(cam.direction, glm::vec3{ 0.0f, 1.0f, 0.0f })) * cam.speed * delta;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		cam.pos -= glm::normalize(glm::cross(cam.direction, glm::vec3{ 0.0f, 1.0f, 0.0f })) * cam.speed * delta;
-	}
+
+	camera_process_movement(window);
 }
 
+/*
 void mouse_callback(GLFWwindow* window, double x, double y) {
 	glm::vec2 mouse_pos_offset{ (float)x - mouse_center_pos.x, mouse_center_pos.y - (float)y };
 	const float sensitivity{ 5.0f };
@@ -69,3 +56,4 @@ void scroll_callback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] doubl
 	if (cam.fov > 45.0f)
 		cam.fov = 45.0f;
 }
+*/
