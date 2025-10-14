@@ -4,8 +4,8 @@
 struct GLFWwindow;
 class Shader;
 
-void init_renderer(Shader* shader);
+void init_renderer();
 
-void render(GLFWwindow* window, Shader* shader);
+void render();
 
 #endif // RENDER_HPP

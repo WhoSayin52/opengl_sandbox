@@ -3,10 +3,10 @@
 
 #include "core.hpp"
 
-uint init_triangle();
+u32 init_triangle();
 
-uint init_rectangle();
+u32 init_rectangle();
 
-uint init_cube();
+u32 init_cube();
 
 #endif // SHAPES_HPP

@@ -4,7 +4,6 @@
 #include "core.hpp"
 #include "input.hpp"
 #include "render.hpp"
-#include "shader.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -14,8 +13,6 @@
 static void framebuffer_size_callback([[maybe_unused]] GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
-
-static Shader* shader = nullptr;
 
 void init_game(s32 window_width, s32 window_height) {
 	glfwInit();
@@ -48,8 +45,7 @@ void init_game(s32 window_width, s32 window_height) {
 	};
 
 	init_input();
-	shader = new Shader{ "../shaders/shader.vs", "../shaders/shader.fs" };
-	init_renderer(shader);
+	init_renderer();
 	init_camera();
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -66,7 +62,7 @@ void game_loop() {
 		last_frame_duration = curren_frame_duration;
 
 		input();
-		render(game_state.window, shader);
+		render();
 	}
 }
 

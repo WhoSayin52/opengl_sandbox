@@ -3,6 +3,14 @@
 
 #include "core.hpp"
 
+u32 shader_create_program(const char* vertex_path, const char* fragment_path);
+
+
+
+
+
+
+/*
 #include <string>
 
 class Shader
@@ -23,6 +31,6 @@ public:
 private:
 	void check_compile_errors(unsigned int shader, std::string type);
 };
-
+*/
 #endif // SHADER_HPP
 

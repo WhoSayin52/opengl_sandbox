@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-uint generate_texture(const char* path, uint text_num, uint rgb) {
+u32 generate_texture(const char* path, u32 text_num, u32 rgb) {
 
-	uint texture;
+	u32 texture;
 	glGenTextures(1, &texture);
 	glActiveTexture(text_num);
 	glBindTexture(GL_TEXTURE_2D, texture);

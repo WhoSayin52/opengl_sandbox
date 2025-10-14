@@ -3,6 +3,6 @@
 
 #include "core.hpp"
 
-uint generate_texture(const char* path, uint text_num, uint rgb);
+u32 generate_texture(const char* path, u32 text_num, u32 rgb);
 
 #endif // TEXTURES_HPP

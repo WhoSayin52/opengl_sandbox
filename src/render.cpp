@@ -15,19 +15,6 @@
 #include <iostream>
 #include <cmath>
 
-/*
-float vertices[] = {
-	// positions         // colors
-	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
-	-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
-	 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top
-};
-
-static uint vbo;
-static uint vao;
-*/
-
-
 static uint texture1;
 static uint texture2;
 
@@ -35,41 +22,20 @@ static uint triangle_vao;
 static uint rectangle_vao;
 static uint cube_vao;
 
+static u32 shader_program{};
 
-
-void init_renderer(Shader* shader) {
-
-	/*
-	// Creating Vertex Array Object and binding it to store vertex attribute configuration and which VBO to use
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	// Creating Vertex Buffer Object and binding data to it
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// Specifying how OpenGL should interpret the vertex data (float vertices[]) and enabling vertex attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	// Unbind VBO since its not registered in VAO
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// Unbind VAO for later use or to bind and configure another VAO
-	glBindVertexArray(0);
-	*/
+void init_renderer() {
 
 	glEnable(GL_DEPTH_TEST);
+
+	shader_program = shader_create_program("../shaders/shader.vs", "../shaders/shader.fs");
 
 	texture1 = generate_texture("../assets/img/container.jpg", 0, GL_RGB);
 	texture2 = generate_texture("../assets/img/awesomeface.png", 1, GL_RGBA);
 
-	shader->use();
-	shader->set_int("texture1", 0);
-	shader->set_int("texture2", 1);
+	glUseProgram(shader_program);
+	glUniform1i(glGetUniformLocation(shader_program, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shader_program, "texture2"), 1);
 
 	triangle_vao = init_triangle();
 	rectangle_vao = init_rectangle();
@@ -89,12 +55,11 @@ static glm::vec3 cube_positions[10] = {
  glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
-void render(GLFWwindow* window, Shader* shader) {
+void render() {
+	GLFWwindow* window = game_state.window;
+
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Tell OpenGL to use(make active) this shader program
-	shader->use();
 
 	// Binding texture
 	glActiveTexture(GL_TEXTURE0);
@@ -114,13 +79,13 @@ void render(GLFWwindow* window, Shader* shader) {
 		Direction3::UP
 	);
 
-	int view_location{ glGetUniformLocation(shader->id, "view") };
+	int view_location{ glGetUniformLocation(shader_program, "view") };
 	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
 
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(camera.zoom), 800.0 / 600.0, 0.1, 100.0);
 
-	int projection_location{ glGetUniformLocation(shader->id, "projection") };
+	int projection_location{ glGetUniformLocation(shader_program, "projection") };
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 
 	// Set polygon rasterization mode of how OpenGL should draw its primatives (default: GL_FRONT_AND_BACK, GL_FILL)
@@ -132,8 +97,8 @@ void render(GLFWwindow* window, Shader* shader) {
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
-	uint count = 3;
-	for (uint i{ 0 }; i < 10; ++i) {
+	u32 count = 3;
+	for (u32 i{ 0 }; i < 10; ++i) {
 		glm::mat4 model{ 1.0f };
 		model = glm::translate(model, cube_positions[i]);
 		float angle = 20.0f * (float)i;
@@ -147,7 +112,7 @@ void render(GLFWwindow* window, Shader* shader) {
 
 		++count;
 
-		int model_location{ glGetUniformLocation(shader->id, "model") };
+		int model_location{ glGetUniformLocation(shader_program, "model") };
 		glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);

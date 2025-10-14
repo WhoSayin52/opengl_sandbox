@@ -9,10 +9,10 @@ float triangle_vertices[] = {
 	 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.5f, 1.0f	 // top 
 };
 
-uint triangle_vbo;
+u32 triangle_vbo;
 
-uint init_triangle() {
-	uint vao;
+u32 init_triangle() {
+	u32 vao;
 
 	// Creating Vertex Array Object and binding it to store vertex attribute configuration and which VBO to use
 	glGenVertexArrays(1, &vao);
@@ -53,11 +53,11 @@ unsigned int rectangle_indices[] = {
 	 1, 2, 3   // second Triangle
 };
 
-uint rectangle_vbo;
-uint rectangle_ebo;
+u32 rectangle_vbo;
+u32 rectangle_ebo;
 
-uint init_rectangle() {
-	uint vao;
+u32 init_rectangle() {
+	u32 vao;
 
 	// Creating Vertex Array Object and binding it to store vertex attribute configuration and which VBO to use
 	glGenVertexArrays(1, &vao);
@@ -136,11 +136,11 @@ float cube_vertices[] = {
 	 -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-uint cube_vbo;
+u32 cube_vbo;
 //uint cube_ebo;
 
-uint init_cube() {
-	uint vao;
+u32 init_cube() {
+	u32 vao;
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
