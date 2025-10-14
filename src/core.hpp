@@ -50,14 +50,24 @@ inline GameState game_state{};
 
 struct Camera {
 	Vector3 position;
-	Vector3 direction;
+	Vector3 right;
+	Vector3 up;
+	Vector3 front;
+	f64 pitch;
+	f64 yaw;
 	f64 zoom;
 };
 
 inline Camera camera{};
 
+struct MouseData {
+	Vector2 lock_position;
+	Vector2 current_position;
+	Vector2 scroll_offset;
+};
+
 struct InputState {
-	Vector2 mouse_position;
+	MouseData mouse;
 };
 
 inline InputState input_state{};

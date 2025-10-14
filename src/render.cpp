@@ -110,7 +110,7 @@ void render(GLFWwindow* window, Shader* shader) {
 	glm::mat4 view;
 	view = glm::lookAt(
 		camera.position,
-		camera.position - camera.direction,
+		camera.position + camera.front,
 		Direction3::UP
 	);
 

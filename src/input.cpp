@@ -5,14 +5,22 @@
 
 #include <GLFW/glfw3.h>
 
+static void scroll_callback([[maybe_unused]] GLFWwindow* window, double x_offset, double y_offset);
+
 void init_input() {
 
-	int mouse_x{ game_state.window_width / 2 };
-	int mouse_y{ game_state.window_height / 2 };
+	GLFWwindow* window{ game_state.window };
+	Vector2 window_center{ game_state.window_width / 2, game_state.window_height / 2 };
 
 	input_state = InputState{
-		.mouse_position = Vector2{mouse_x, mouse_y}
+		.mouse = MouseData{
+			.lock_position = Vector2{window_center.x, window_center.y},
+			.current_position = Vector2{window_center.x, window_center.y},
+			.scroll_offset = Vector2{0.0}
+		}
 	};
+
+	glfwSetScrollCallback(window, scroll_callback);
 }
 
 void input() {
@@ -20,40 +28,24 @@ void input() {
 	glfwPollEvents();
 
 	GLFWwindow* window = game_state.window;
+	glfwGetCursorPos(window, &input_state.mouse.current_position.x, &input_state.mouse.current_position.y);
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
 
 	camera_process_movement(window);
+
+	glfwSetCursorPos(window, input_state.mouse.lock_position.x, input_state.mouse.lock_position.y);
+	input_state.mouse.current_position = input_state.mouse.lock_position;
+
+	// reseting scroll offset, since scroll_callback wont be called if no scrolling is occurring 
+	input_state.mouse.scroll_offset.x = 0.0;
+	input_state.mouse.scroll_offset.y = 0.0;
 }
 
-/*
-void mouse_callback(GLFWwindow* window, double x, double y) {
-	glm::vec2 mouse_pos_offset{ (float)x - mouse_center_pos.x, mouse_center_pos.y - (float)y };
-	const float sensitivity{ 5.0f };
-	mouse_pos_offset *= sensitivity * delta;
-	yaw += mouse_pos_offset.x;
-	pitch -= mouse_pos_offset.y;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	cam.direction.x = (float)cos(glm::radians(yaw)) * (float)cos(glm::radians(pitch));
-	cam.direction.y = (float)sin(glm::radians(pitch));
-	cam.direction.z = (float)sin(glm::radians(yaw)) * (float)cos(glm::radians(pitch));
-	cam.direction = glm::normalize(cam.direction);
-
-	glfwSetCursorPos(window, mouse_center_pos.x, mouse_center_pos.y);
+static void scroll_callback([[maybe_unused]] GLFWwindow* window, double x_offset, double y_offset) {
+	input_state.mouse.scroll_offset.x = x_offset;
+	input_state.mouse.scroll_offset.y = y_offset;
 }
 
-void scroll_callback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] double x_offset, double y_offset) {
-	cam.fov -= (float)y_offset;
-	if (cam.fov < 1.0f)
-		cam.fov = 1.0f;
-	if (cam.fov > 45.0f)
-		cam.fov = 45.0f;
-}
-*/
