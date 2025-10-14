@@ -3,10 +3,10 @@
 #include <glad/glad.h>	
 
 float triangle_vertices[] = {
-	// positions         // colors		 	  // texture coords
-	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 0.0f,	 // bottom right
-	-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 0.0f,	 // bottom left
-	 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.5f, 1.0f	 // top 
+	// positions         
+	 0.5f, -0.5f, 0.0f,  // bottom right
+	-0.5f, -0.5f, 0.0f,  // bottom left
+	 0.0f,  0.5f, 0.0f,  // top 
 };
 
 u32 triangle_vbo;
@@ -26,10 +26,6 @@ u32 init_triangle() {
 	// Specifying how OpenGL should interpret the vertex data (float vertices[]) and enabling vertex attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 	// Unbind VBO since its not registered in VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -41,11 +37,11 @@ u32 init_triangle() {
 }
 
 float rectangle_vertices[] = {
-	// positions          // colors           // texture coords
-	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+	// positions          
+	 0.5f,  0.5f, 0.0f,	// top right
+	 0.5f, -0.5f, 0.0f,  // bottom right
+	-0.5f, -0.5f, 0.0f,  // bottom left
+	-0.5f,  0.5f, 0.0f,  // top left 
 };
 
 unsigned int rectangle_indices[] = {
@@ -75,10 +71,6 @@ u32 init_rectangle() {
 	// Specifying how OpenGL should interpret the vertex data (float vertices[]) and enabling vertex attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 	// Unbind VBO since its not registered in VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -139,11 +131,9 @@ float cube_vertices[] = {
 u32 cube_vbo;
 //uint cube_ebo;
 
-u32 init_cube() {
-	u32 vao;
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+void init_cube(u32* vao) {
+	glGenVertexArrays(1, vao);
+	glBindVertexArray(*vao);
 
 	glGenBuffers(1, &cube_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, cube_vbo);
@@ -151,13 +141,8 @@ u32 init_cube() {
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	// skipping 1 since we dont need color shader var like above shapes
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
-
-	return vao;
 }

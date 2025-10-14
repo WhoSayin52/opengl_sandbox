@@ -25,6 +25,10 @@ using Vector4 = glm::dvec4;
 using Vector3 = glm::dvec3;
 using Vector2 = glm::dvec2;
 
+using Vector4f = glm::vec4;
+using Vector3f = glm::vec3;
+using Vector2f = glm::vec2;
+
 namespace Direction3 {
 	constexpr Vector3 UP{ 0.0, 1.0, 0.0 };
 	constexpr Vector3 DOWN{ 0.0, -1.0, 0.0 };
@@ -37,6 +41,10 @@ namespace Direction3 {
 using Matrix4 = glm::dmat4;
 using Matrix3 = glm::dmat3;
 using Matrix2 = glm::dmat2;
+
+using Matrix4f = glm::mat4;
+using Matrix3f = glm::mat3;
+using Matrix2f = glm::mat2;
 
 struct GLFWwindow;
 struct GameState {
