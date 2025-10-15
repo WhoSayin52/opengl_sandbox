@@ -1,6 +1,8 @@
 #include "camera.hpp"
 
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 constexpr f64 CAMERA_SPEED{ 2.5 };
 constexpr f64 ROTATION_SPEED{ 10.0 };
@@ -82,4 +84,12 @@ void camera_process_movement(GLFWwindow* window) {
 	else if (camera.zoom > 45.0) {
 		camera.zoom = 45.0;
 	}
+}
+
+Matrix4f camera_get_view_matrix() {
+	return glm::lookAt(
+		camera.position,
+		camera.position + camera.front,
+		Direction3::UP
+	);
 }
