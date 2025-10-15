@@ -20,7 +20,8 @@ static u32 cube_vao;
 static u32 light_shaders;
 static u32 object_shaders;
 
-Vector3f light_position(1.2f, 1.0f, 2.0f);
+constexpr Vector3f light_position(1.2f, 1.0f, 2.0f);
+constexpr Vector3f light_color(1.0f, 1.0f, 1.0f);
 
 void init_renderer() {
 
@@ -31,12 +32,15 @@ void init_renderer() {
 
 	glUseProgram(light_shaders);
 
+	glUniform3fv(glGetUniformLocation(light_shaders, "light_color"), 1, glm::value_ptr(light_color));
+
 	// object shaders
 	object_shaders = shader_create_program("../shaders/object.vert", "../shaders/object.frag");
 
 	glUseProgram(object_shaders);
 
-	glUniform3f(glGetUniformLocation(object_shaders, "light_color"), 1.0f, 1.0f, 1.0f);
+	glUniform3fv(glGetUniformLocation(object_shaders, "light_position"), 1, glm::value_ptr(light_position));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light_color"), 1, glm::value_ptr(light_color));
 	glUniform3f(glGetUniformLocation(object_shaders, "object_color"), 1.0f, 0.5f, 0.31f);
 
 	init_cube(&light_vao);
@@ -61,6 +65,8 @@ void render() {
 	Matrix4f model{ 1.0f };
 
 	glUseProgram(object_shaders);
+
+	glUniform3fv(glGetUniformLocation(object_shaders, "camera_position"), 1, glm::value_ptr(Vector3f(camera.position)));
 
 	int model_location{ glGetUniformLocation(object_shaders, "model") };
 	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
