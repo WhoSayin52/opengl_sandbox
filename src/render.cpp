@@ -22,6 +22,7 @@ static u32 light_shaders;
 static u32 object_shaders;
 
 static u32 wooden_container_texture;
+static u32 wooden_container_specular;
 
 struct Light {
 	Vector3f position;
@@ -43,6 +44,7 @@ void init_renderer() {
 
 	// generating texture
 	wooden_container_texture = generate_texture("../assets/img/container2.png", GL_TEXTURE0, GL_RGBA);
+	wooden_container_specular = generate_texture("../assets/img/container2_specular.png", GL_TEXTURE1, GL_RGBA);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -69,8 +71,8 @@ void init_renderer() {
 	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(light.specular));
 
 	// Material struct
-	glUniform1i(glGetUniformLocation(object_shaders, "material.diffuse"), GL_TEXTURE0);
-	glUniform3f(glGetUniformLocation(object_shaders, "material.specular"), 0.5f, 0.5f, 0.5f);
+	glUniform1i(glGetUniformLocation(object_shaders, "material.diffuse"), 0);
+	glUniform1i(glGetUniformLocation(object_shaders, "material.specular"), 1);
 	glUniform1f(glGetUniformLocation(object_shaders, "material.shininess"), 32.0f);
 
 	init_cube(&light_vao);
@@ -99,6 +101,9 @@ void render() {
 	// activating texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, wooden_container_texture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, wooden_container_specular);
 
 	// temp
 	//light.position = Vector3f((float)cos(glfwGetTime()) * 5, 1.0f, (float)sin(glfwGetTime()) * 5);

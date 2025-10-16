@@ -10,7 +10,7 @@ struct Light {
 
 struct Material {
     sampler2D diffuse;
-    vec3 specular;
+    sampler2D specular;
     float shininess;
 };
 
@@ -41,7 +41,7 @@ void main() {
     vec3 view_direction = normalize(camera_position - fragment_position);
     vec3 reflect_direction = reflect(-light_direction, norm);
     float specular_strength = pow(max(dot(view_direction, reflect_direction), 0.0), material.shininess);
-    vec3 specular = light.specular * specular_strength * material.specular;
+    vec3 specular = light.specular * specular_strength * vec3(texture(material.specular, texture_coordinates));
 
     vec3 result = (ambient + diffuse + specular);
     fragment_color = vec4(result, 1.0);
