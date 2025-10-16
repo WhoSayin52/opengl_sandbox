@@ -20,8 +20,21 @@ static u32 cube_vao;
 static u32 light_shaders;
 static u32 object_shaders;
 
-constexpr Vector3f light_position(1.2f, 1.0f, 2.0f);
-constexpr Vector3f light_color(1.0f, 1.0f, 1.0f);
+struct Light {
+	Vector3f position;
+
+	Vector3f ambient;
+	Vector3f diffuse;
+	Vector3f specular;
+};
+
+static Light light{
+	Vector3f{1.2f, 1.0f, 2.0f},
+
+	Vector3f{0.2f, 0.2f, 0.2f},
+	Vector3f{0.5f, 0.5f, 0.5f},
+	Vector3f{1.0f, 1.0f, 1.0f}
+};
 
 void init_renderer() {
 
@@ -32,16 +45,28 @@ void init_renderer() {
 
 	glUseProgram(light_shaders);
 
-	glUniform3fv(glGetUniformLocation(light_shaders, "light_color"), 1, glm::value_ptr(light_color));
+	// Light struct
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.position"), 1, glm::value_ptr(light.position));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.ambient"), 1, glm::value_ptr(light.ambient));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.diffuse"), 1, glm::value_ptr(light.diffuse));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(light.specular));
 
 	// object shaders
 	object_shaders = shader_create_program("../shaders/object.vert", "../shaders/object.frag");
 
 	glUseProgram(object_shaders);
 
-	glUniform3fv(glGetUniformLocation(object_shaders, "light_position"), 1, glm::value_ptr(light_position));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light_color"), 1, glm::value_ptr(light_color));
-	glUniform3f(glGetUniformLocation(object_shaders, "object_color"), 1.0f, 0.5f, 0.31f);
+	// Light struct
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.position"), 1, glm::value_ptr(light.position));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.ambient"), 1, glm::value_ptr(light.ambient));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.diffuse"), 1, glm::value_ptr(light.diffuse));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(light.specular));
+
+	// Material struct
+	glUniform3f(glGetUniformLocation(object_shaders, "material.ambient"), 1.0f, 0.5f, 0.31f);
+	glUniform3f(glGetUniformLocation(object_shaders, "material.diffuse"), 1.0f, 0.5f, 0.31f);
+	glUniform3f(glGetUniformLocation(object_shaders, "material.specular"), 0.5f, 0.5f, 0.5f);
+	glUniform1f(glGetUniformLocation(object_shaders, "material.shininess"), 32.0f);
 
 	init_cube(&light_vao);
 	init_cube(&cube_vao);
@@ -66,6 +91,11 @@ void render() {
 
 	glUseProgram(object_shaders);
 
+	// temp
+	//light.position = Vector3f((float)cos(glfwGetTime()) * 5, 1.0f, (float)sin(glfwGetTime()) * 5);
+	//glUniform3fv(glGetUniformLocation(object_shaders, "light.position"), 1, glm::value_ptr(light.position));
+	// temp
+
 	glUniform3fv(glGetUniformLocation(object_shaders, "camera_position"), 1, glm::value_ptr(Vector3f(camera.position)));
 
 	int model_location{ glGetUniformLocation(object_shaders, "model") };
@@ -82,7 +112,7 @@ void render() {
 
 	// drawing light 
 	model = Matrix4f{ 1.0f };
-	model = glm::translate(model, light_position);
+	model = glm::translate(model, light.position);
 	model = glm::scale(model, Vector3f{ 0.2f });
 
 	glUseProgram(light_shaders);
