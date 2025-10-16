@@ -4,6 +4,7 @@
 #include "core.hpp"
 #include "shapes.hpp"
 #include "shader.hpp"
+#include "textures.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -19,6 +20,8 @@ static u32 cube_vao;
 
 static u32 light_shaders;
 static u32 object_shaders;
+
+static u32 wooden_container_texture;
 
 struct Light {
 	Vector3f position;
@@ -38,9 +41,12 @@ static Light light{
 
 void init_renderer() {
 
+	// generating texture
+	wooden_container_texture = generate_texture("../assets/img/container2.png", GL_TEXTURE0, GL_RGBA);
+
 	glEnable(GL_DEPTH_TEST);
 
-	// light shaders
+	// -- light shaders --
 	light_shaders = shader_create_program("../shaders/object.vert", "../shaders/light.frag");
 
 	glUseProgram(light_shaders);
@@ -51,7 +57,7 @@ void init_renderer() {
 	glUniform3fv(glGetUniformLocation(object_shaders, "light.diffuse"), 1, glm::value_ptr(light.diffuse));
 	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(light.specular));
 
-	// object shaders
+	// -- object shaders --
 	object_shaders = shader_create_program("../shaders/object.vert", "../shaders/object.frag");
 
 	glUseProgram(object_shaders);
@@ -63,8 +69,7 @@ void init_renderer() {
 	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(light.specular));
 
 	// Material struct
-	glUniform3f(glGetUniformLocation(object_shaders, "material.ambient"), 1.0f, 0.5f, 0.31f);
-	glUniform3f(glGetUniformLocation(object_shaders, "material.diffuse"), 1.0f, 0.5f, 0.31f);
+	glUniform1i(glGetUniformLocation(object_shaders, "material.diffuse"), GL_TEXTURE0);
 	glUniform3f(glGetUniformLocation(object_shaders, "material.specular"), 0.5f, 0.5f, 0.5f);
 	glUniform1f(glGetUniformLocation(object_shaders, "material.shininess"), 32.0f);
 
@@ -90,6 +95,10 @@ void render() {
 	Matrix4f model{ 1.0f };
 
 	glUseProgram(object_shaders);
+
+	// activating texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wooden_container_texture);
 
 	// temp
 	//light.position = Vector3f((float)cos(glfwGetTime()) * 5, 1.0f, (float)sin(glfwGetTime()) * 5);
