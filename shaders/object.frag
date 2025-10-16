@@ -37,10 +37,9 @@ void main() {
     vec3 diffuse = light.diffuse * material.diffuse * diffuse_strength;
 
     // specular calculation
-    float specular_strength = 0.5;
     vec3 view_direction = normalize(camera_position - fragment_position);
     vec3 reflect_direction = reflect(-light_direction, norm);
-    specular_strength *= pow(max(dot(view_direction, reflect_direction), 0.0), material.shininess);
+    float specular_strength = pow(max(dot(view_direction, reflect_direction), 0.0), material.shininess);
     vec3 specular = light.specular * specular_strength * material.specular;
 
     vec3 result = (ambient + diffuse + specular);
