@@ -5,6 +5,7 @@ target_sources(
 	core.hpp
 	game.hpp game.cpp
 	input.hpp input.cpp
+	light.hpp light.cpp
 	main.cpp
 	render.hpp render.cpp
 	shader.hpp shader.cpp

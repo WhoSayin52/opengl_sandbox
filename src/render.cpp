@@ -2,6 +2,7 @@
 
 #include "camera.hpp"
 #include "core.hpp"
+#include "light.hpp"
 #include "shapes.hpp"
 #include "shader.hpp"
 #include "textures.hpp"
@@ -13,7 +14,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
-#include <cmath>
 
 static u32 light_vao;
 static u32 cube_vao;
@@ -24,20 +24,24 @@ static u32 object_shaders;
 static u32 wooden_container_texture;
 static u32 wooden_container_specular;
 
-struct Light {
-	Vector3f position;
+static DirectionalLight directional_light{
+	.direction = Vector3f{-0.2f, -1.0f, -0.3f},
 
-	Vector3f ambient;
-	Vector3f diffuse;
-	Vector3f specular;
+	.component = LightComponent{
+		Vector3f{0.2f, 0.2f, 0.2f},
+		Vector3f{0.5f, 0.5f, 0.5f},
+		Vector3f{1.0f, 1.0f, 1.0f}
+	}
 };
 
-static Light light{
-	Vector3f{1.2f, 1.0f, 2.0f},
+static PointLight point_light{
+	.position = Vector3f{1.2f, 1.0f, 2.0f},
 
-	Vector3f{0.2f, 0.2f, 0.2f},
-	Vector3f{0.5f, 0.5f, 0.5f},
-	Vector3f{1.0f, 1.0f, 1.0f}
+	.component = LightComponent{
+		Vector3f{0.2f, 0.2f, 0.2f},
+		Vector3f{0.5f, 0.5f, 0.5f},
+		Vector3f{1.0f, 1.0f, 1.0f}
+	}
 };
 
 void init_renderer() {
@@ -51,24 +55,16 @@ void init_renderer() {
 	// -- light shaders --
 	light_shaders = shader_create_program("../shaders/object.vert", "../shaders/light.frag");
 
-	glUseProgram(light_shaders);
-
-	// Light struct
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.position"), 1, glm::value_ptr(light.position));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.ambient"), 1, glm::value_ptr(light.ambient));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.diffuse"), 1, glm::value_ptr(light.diffuse));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(light.specular));
-
 	// -- object shaders --
 	object_shaders = shader_create_program("../shaders/object.vert", "../shaders/object.frag");
 
 	glUseProgram(object_shaders);
 
 	// Light struct
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.position"), 1, glm::value_ptr(light.position));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.ambient"), 1, glm::value_ptr(light.ambient));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.diffuse"), 1, glm::value_ptr(light.diffuse));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(light.specular));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.direction"), 1, glm::value_ptr(directional_light.direction));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.ambient"), 1, glm::value_ptr(directional_light.component.ambient));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.diffuse"), 1, glm::value_ptr(directional_light.component.diffuse));
+	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(directional_light.component.specular));
 
 	// Material struct
 	glUniform1i(glGetUniformLocation(object_shaders, "material.diffuse"), 0);
@@ -79,11 +75,27 @@ void init_renderer() {
 	init_cube(&cube_vao);
 }
 
+glm::vec3 cube_positions[10] = {
+	 glm::vec3(0.0f,  0.0f,  0.0f),
+	 glm::vec3(2.0f,  5.0f, -15.0f),
+	 glm::vec3(-1.5f, -2.2f, -2.5f),
+	 glm::vec3(-3.8f, -2.0f, -12.3f),
+	 glm::vec3(2.4f, -0.4f, -3.5f),
+	 glm::vec3(-1.7f,  3.0f, -7.5f),
+	 glm::vec3(1.3f, -2.0f, -2.5f),
+	 glm::vec3(1.5f,  2.0f, -2.5f),
+	 glm::vec3(1.5f,  0.2f, -1.5f),
+	 glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
 void render() {
 	GLFWwindow* window = game_state.window;
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// model
+	Matrix4f model{ 1.0f };
 
 	// view
 	Matrix4f view;
@@ -94,9 +106,8 @@ void render() {
 	projection = glm::perspective(glm::radians(camera.zoom), 800.0 / 600.0, 0.1, 100.0);
 
 	// drawing cube
-	Matrix4f model{ 1.0f };
-
 	glUseProgram(object_shaders);
+	glBindVertexArray(cube_vao);
 
 	// activating texture
 	glActiveTexture(GL_TEXTURE0);
@@ -105,31 +116,51 @@ void render() {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, wooden_container_specular);
 
-	// temp
-	//light.position = Vector3f((float)cos(glfwGetTime()) * 5, 1.0f, (float)sin(glfwGetTime()) * 5);
-	//glUniform3fv(glGetUniformLocation(object_shaders, "light.position"), 1, glm::value_ptr(light.position));
-	// temp
-
+	// passing camera positions
 	glUniform3fv(glGetUniformLocation(object_shaders, "camera_position"), 1, glm::value_ptr(Vector3f(camera.position)));
 
-	int model_location{ glGetUniformLocation(object_shaders, "model") };
-	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
-
+	// passing view matrix
 	int view_location{ glGetUniformLocation(object_shaders, "view") };
 	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
 
+	// passing projection matrix
 	int projection_location{ glGetUniformLocation(object_shaders, "projection") };
 	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 
-	glBindVertexArray(cube_vao);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	// passing model matrix 
+	int model_location{ glGetUniformLocation(object_shaders, "model") };
+	s32 count{ 0 };
+	for (s32 i = 0; i < 10; i++) {
+
+		model = Matrix4f(1.0f);
+		model = glm::translate(model, cube_positions[i]);
+		f32 angle = 20.0f * (float)i;
+
+		if (count == 2) {
+			count = 0;
+			model = glm::rotate(model, glm::radians(angle * (float)glfwGetTime()), glm::vec3(1.0f, 0.3f, 0.5f));
+		}
+		else {
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			++count;
+		}
+
+		glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 
 	// drawing light 
-	model = Matrix4f{ 1.0f };
-	model = glm::translate(model, light.position);
-	model = glm::scale(model, Vector3f{ 0.2f });
-
 	glUseProgram(light_shaders);
+
+	// temp
+	//light.position = Vector3f((float)cos(glfwGetTime()) * 5, 1.0f, (float)sin(glfwGetTime()) * 5);
+	//glUniform3fv(glGetUniformLocation(light_shaders, "light.position"), 1, glm::value_ptr(light.position));
+	// temp
+
+	model = Matrix4f{ 1.0f };
+	model = glm::translate(model, point_light.position);
+	model = glm::scale(model, Vector3f{ 0.2f });
 
 	model_location = glGetUniformLocation(light_shaders, "model");
 	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
