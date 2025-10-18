@@ -41,7 +41,10 @@ static PointLight point_light{
 		Vector3f{0.2f, 0.2f, 0.2f},
 		Vector3f{0.5f, 0.5f, 0.5f},
 		Vector3f{1.0f, 1.0f, 1.0f}
-	}
+	},
+	.constant = 1.0f,
+	.linear = 0.09f,
+	.quadratic = 0.032f
 };
 
 void init_renderer() {
@@ -60,11 +63,20 @@ void init_renderer() {
 
 	glUseProgram(object_shaders);
 
-	// Light struct
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.direction"), 1, glm::value_ptr(directional_light.direction));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.ambient"), 1, glm::value_ptr(directional_light.component.ambient));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.diffuse"), 1, glm::value_ptr(directional_light.component.diffuse));
-	glUniform3fv(glGetUniformLocation(object_shaders, "light.specular"), 1, glm::value_ptr(directional_light.component.specular));
+	// Directional Light struct
+	glUniform3fv(glGetUniformLocation(object_shaders, "directional_light.direction"), 1, glm::value_ptr(directional_light.direction));
+	glUniform3fv(glGetUniformLocation(object_shaders, "directional_light.ambient"), 1, glm::value_ptr(directional_light.component.ambient));
+	glUniform3fv(glGetUniformLocation(object_shaders, "directional_light.diffuse"), 1, glm::value_ptr(directional_light.component.diffuse));
+	glUniform3fv(glGetUniformLocation(object_shaders, "directional_light.specular"), 1, glm::value_ptr(directional_light.component.specular));
+
+	// Point Light struct
+	glUniform3fv(glGetUniformLocation(object_shaders, "point_light.position"), 1, glm::value_ptr(point_light.position));
+	glUniform3fv(glGetUniformLocation(object_shaders, "point_light.ambient"), 1, glm::value_ptr(point_light.component.ambient));
+	glUniform3fv(glGetUniformLocation(object_shaders, "point_light.diffuse"), 1, glm::value_ptr(point_light.component.diffuse));
+	glUniform3fv(glGetUniformLocation(object_shaders, "point_light.specular"), 1, glm::value_ptr(point_light.component.specular));
+	glUniform1f(glGetUniformLocation(object_shaders, "point_light.constant"), point_light.constant);
+	glUniform1f(glGetUniformLocation(object_shaders, "point_light.linear"), point_light.linear);
+	glUniform1f(glGetUniformLocation(object_shaders, "point_light.quadratic"), point_light.quadratic);
 
 	// Material struct
 	glUniform1i(glGetUniformLocation(object_shaders, "material.diffuse"), 0);

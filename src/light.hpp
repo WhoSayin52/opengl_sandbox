@@ -19,6 +19,9 @@ struct PointLight {
 	Vector3f position;
 
 	LightComponent component;
+	f32 constant;
+	f32 linear;
+	f32 quadratic;
 };
 
 #endif // LIGHT_HPP
