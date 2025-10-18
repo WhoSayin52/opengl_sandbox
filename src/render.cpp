@@ -47,6 +47,19 @@ static PointLight point_light{
 	.quadratic = 0.032f
 };
 
+static Spotlight flashlight{ // a flashlight is a spot light that beams from the viewers camera
+	.position = Vector3f{0.0f},
+	.direction = Vector3f{0.0f},
+
+	.component = LightComponent{
+		Vector3f{0.2f, 0.2f, 0.2f},
+		Vector3f{0.5f, 0.5f, 0.5f},
+		Vector3f{1.0f, 1.0f, 1.0f}
+	},
+
+	.half_angle = 12.5f
+};
+
 void init_renderer() {
 
 	// generating texture
@@ -78,6 +91,14 @@ void init_renderer() {
 	glUniform1f(glGetUniformLocation(object_shaders, "point_light.linear"), point_light.linear);
 	glUniform1f(glGetUniformLocation(object_shaders, "point_light.quadratic"), point_light.quadratic);
 
+	// Flash Light struct
+	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.position"), 1, glm::value_ptr(flashlight.position));
+	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.direction"), 1, glm::value_ptr(flashlight.direction));
+	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.ambient"), 1, glm::value_ptr(flashlight.component.ambient));
+	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.diffuse"), 1, glm::value_ptr(flashlight.component.diffuse));
+	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.specular"), 1, glm::value_ptr(flashlight.component.specular));
+	glUniform1f(glGetUniformLocation(object_shaders, "flashlight.half_angle"), glm::cos(glm::radians(flashlight.half_angle)));
+
 	// Material struct
 	glUniform1i(glGetUniformLocation(object_shaders, "material.diffuse"), 0);
 	glUniform1i(glGetUniformLocation(object_shaders, "material.specular"), 1);
@@ -88,16 +109,16 @@ void init_renderer() {
 }
 
 glm::vec3 cube_positions[10] = {
-	 glm::vec3(0.0f,  0.0f,  0.0f),
-	 glm::vec3(2.0f,  5.0f, -15.0f),
-	 glm::vec3(-1.5f, -2.2f, -2.5f),
-	 glm::vec3(-3.8f, -2.0f, -12.3f),
-	 glm::vec3(2.4f, -0.4f, -3.5f),
-	 glm::vec3(-1.7f,  3.0f, -7.5f),
-	 glm::vec3(1.3f, -2.0f, -2.5f),
-	 glm::vec3(1.5f,  2.0f, -2.5f),
-	 glm::vec3(1.5f,  0.2f, -1.5f),
-	 glm::vec3(-1.3f,  1.0f, -1.5f)
+	glm::vec3(0.0f, 0.0f, 0.0f),
+	glm::vec3(2.0f, 5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f, 3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f, 2.0f, -2.5f),
+	glm::vec3(1.5f, 0.2f, -1.5f),
+	glm::vec3(-1.3f, 1.0f, -1.5f)
 };
 
 void render() {
@@ -130,6 +151,11 @@ void render() {
 
 	// passing camera positions
 	glUniform3fv(glGetUniformLocation(object_shaders, "camera_position"), 1, glm::value_ptr(Vector3f(camera.position)));
+	// passing flashlight data
+	flashlight.position = camera.position;
+	flashlight.direction = camera.front;
+	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.position"), 1, glm::value_ptr(flashlight.position));
+	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.direction"), 1, glm::value_ptr(flashlight.direction));
 
 	// passing view matrix
 	int view_location{ glGetUniformLocation(object_shaders, "view") };

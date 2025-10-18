@@ -24,4 +24,13 @@ struct PointLight {
 	f32 quadratic;
 };
 
+struct Spotlight {
+	Vector3f position;
+	Vector3f direction;
+
+	LightComponent component;
+
+	f32 half_angle;
+};
+
 #endif // LIGHT_HPP
