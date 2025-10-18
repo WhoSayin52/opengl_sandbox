@@ -30,7 +30,8 @@ struct Spotlight {
 
 	LightComponent component;
 
-	f32 half_angle;
+	f32 inner_cone_angle;
+	f32 outer_cone_angle;
 };
 
 #endif // LIGHT_HPP

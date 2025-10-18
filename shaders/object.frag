@@ -28,7 +28,8 @@ struct Spotlight {
     vec3 diffuse;
     vec3 specular;
 
-    float half_angle;
+    float inner_cone_angle;
+    float outer_cone_angle;
 };
 
 struct Material {
@@ -91,9 +92,11 @@ void main() {
     vec3 specular = vec3(0.0);
 
     vec3 light_direction = normalize(flashlight.position - fragment_position);
-    float cutoff_angle = dot(light_direction, normalize(-flashlight.direction));
+    float theta = dot(light_direction, normalize(-flashlight.direction));
+    float epsilon = flashlight.inner_cone_angle - flashlight.outer_cone_angle;
+    float intensity = clamp((theta - flashlight.outer_cone_angle) / epsilon, 0.0, 1.0);
 
-    if (cutoff_angle > flashlight.half_angle) {
+    if (theta > flashlight.outer_cone_angle) {
         ambient = flashlight.ambient * vec3(texture(material.diffuse, texture_coordinates));
 
         vec3 norm = normalize(normal);
@@ -109,8 +112,9 @@ void main() {
         ambient = flashlight.ambient * vec3(texture(material.diffuse, texture_coordinates));
     }
 
-    vec3 result = (ambient + diffuse + specular);
+    //vec3 result = (ambient + diffuse + specular);
     //vec3 result = (ambient + diffuse + specular) * attenuation; // for point light, maybe also spotlight
+    vec3 result = ambient + (diffuse + specular) * intensity; // for spotlight soft edges
 
     fragment_color = vec4(result, 1.0);
 }

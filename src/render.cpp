@@ -57,7 +57,8 @@ static Spotlight flashlight{ // a flashlight is a spot light that beams from the
 		Vector3f{1.0f, 1.0f, 1.0f}
 	},
 
-	.half_angle = 12.5f
+	.inner_cone_angle = 12.5f,
+	.outer_cone_angle = 17.5f,
 };
 
 void init_renderer() {
@@ -97,7 +98,8 @@ void init_renderer() {
 	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.ambient"), 1, glm::value_ptr(flashlight.component.ambient));
 	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.diffuse"), 1, glm::value_ptr(flashlight.component.diffuse));
 	glUniform3fv(glGetUniformLocation(object_shaders, "flashlight.specular"), 1, glm::value_ptr(flashlight.component.specular));
-	glUniform1f(glGetUniformLocation(object_shaders, "flashlight.half_angle"), glm::cos(glm::radians(flashlight.half_angle)));
+	glUniform1f(glGetUniformLocation(object_shaders, "flashlight.inner_cone_angle"), glm::cos(glm::radians(flashlight.inner_cone_angle)));
+	glUniform1f(glGetUniformLocation(object_shaders, "flashlight.outer_cone_angle"), glm::cos(glm::radians(flashlight.outer_cone_angle)));
 
 	// Material struct
 	glUniform1i(glGetUniformLocation(object_shaders, "material.diffuse"), 0);
